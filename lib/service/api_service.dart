@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService extends GetxService {
-  final String _baseUrl = "https://insertapi.online/public/api";
+  final String _baseUrl = "https://dpplaboratory.online/public/api";
   RxBool isLoggedIn = false.obs;
   String? _authToken;
 

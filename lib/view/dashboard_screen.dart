@@ -24,10 +24,10 @@ class DashboardScreen extends StatelessWidget {
         () {
           return Center(
             child: [
-              const HomeScreen(),
-              const FavoriteScreen(),
-              const PrayScreen(),
-              const DuaScreen(),
+              HomeScreen(),
+              FavoriteScreen(),
+              PrayScreen(),
+              DuaScreen(),
             ].elementAt(dashboardC.selectedIndex.value),
           );
         },

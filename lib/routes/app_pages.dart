@@ -6,6 +6,7 @@ import 'package:holy_quran/routes/app_routes.dart';
 import 'package:holy_quran/view/dashboard_screen.dart';
 
 import '../binding/binding_auth.dart';
+import '../view/menu/home/read_screen.dart';
 import '../view/welcome_screen.dart';
 
 class AppPages {
@@ -21,6 +22,11 @@ class AppPages {
       name: AppRoutes.dashboardScreen,
       page: () => DashboardScreen(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.readScreen,
+      page: () => ReadScreen(),
+      // binding: DashboardBinding(),
     ),
   ];
 }

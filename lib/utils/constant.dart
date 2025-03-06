@@ -1,0 +1,1 @@
+const double mainMargin = 16.0;

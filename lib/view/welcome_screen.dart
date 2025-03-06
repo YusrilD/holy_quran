@@ -25,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
           children: [
             kToolbarHeight.verticalSpace,
             Text(
-              "Al Quranul Karim",
+              "Al Qur'anul Karim",
               style: textTheme.headlineLarge,
             ),
             Text(
