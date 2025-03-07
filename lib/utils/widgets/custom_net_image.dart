@@ -34,6 +34,7 @@ class ImageFromNet extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imgUrl,
+
       imageBuilder: (context, imageProvider) => Container(
         width: width,
         height: height,
@@ -44,31 +45,32 @@ class ImageFromNet extends StatelessWidget {
             bottomLeft: Radius.circular(radiusBottomLeft),
             bottomRight: Radius.circular(radiusBottomRight),
           ),
-          border: Border.all(width: borderWidth, color: Colors.grey),
-          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+          image: DecorationImage(
+            image: imageProvider,
+            fit: boxFit,
+            alignment: Alignment.topCenter,
+          ),
         ),
       ),
       placeholder: (context, url) {
         return SizedBox(
-          height: Get.height,
+          height: height,
           width: Get.width,
           child: const Center(
             child: CircularProgressIndicator(),
           ),
         );
-          // ShimmerEffect(width: width, height: height, shape: shape);
+        // ShimmerEffect(width: width, height: height, shape: shape);
       },
       errorWidget: (context, url, error) => SizedBox(
         width: width,
         height: height,
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: const Color(AppColor.primary),
-          ),
-          child: const Icon(Icons.image_outlined)
-
-        ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: const Color(AppColor.primary),
+            ),
+            child: const Icon(Icons.image_outlined)),
       ) /*const Icon(Icons.error)*/,
     );
   }

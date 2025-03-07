@@ -15,16 +15,25 @@ class ReadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: ListView.builder(
+        shrinkWrap: true,
         itemCount: images.length,
+        padding: EdgeInsets.zero,
         itemBuilder: (_, index) {
           var item = images[index];
           return ImageFromNet(
             imgUrl: item,
             shape: BoxShape.rectangle,
             width: Get.width,
-            height: Get.height,
+            height: Get.height * 0.9,
             boxFit: BoxFit.contain,
+            radiusBottomLeft: 0,
+            radiusBottomRight: 0,
+            radiusTopLeft: 0,
+            radiusTopRight: 0,
+          ).paddingOnly(
+            top: index == 0 ? MediaQuery.of(context).padding.top : 0,
           );
         },
       ),

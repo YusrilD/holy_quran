@@ -9,10 +9,12 @@ import 'package:holy_quran/data/repository/home_screen_repository.dart';
 import 'package:holy_quran/routes/app_routes.dart';
 import 'package:holy_quran/view/menu/home/list_of_surah_screen.dart';
 
+import '../data/database/isar_service.dart';
 import '../data/model/list_juzz_model.dart';
 import '../view/menu/home/list_of_juzz_screen.dart';
 
 class HomeScreenController extends GetxController {
+  final IsarService isarService = IsarService();
   final _homeScreenRepository = Get.find<HomeScreenRepository>();
   var listSurah = <ListSurahModel>[].obs;
   var listJuzz = <ListJuzzModel>[].obs;
@@ -20,13 +22,25 @@ class HomeScreenController extends GetxController {
   var juzz = JuzzModel().obs;
   var listQuran = <dynamic>[].obs;
 
+  var lastRead = <ListSurahModel>[].obs;
+  var lastReadTemp = <ListSurahModel>[].obs;
+
   var isLoadingSurah = false.obs;
   var isLoadingJuzz = false.obs;
   var isLoadingSingleSurah = false.obs;
   var isLoadingSingleJuzz = false.obs;
   var selectedIndexPage = 0.obs;
+  var selectedLastReadIndexPage = 0.obs;
 
   late PageController quranPageCtrl;
+  late PageController lastReadPageCtrl;
+
+  void fetchSurahs() async {
+    final allSurahs = await isarService.getAll<ListSurahModel>();
+    lastRead.assignAll(allSurahs);
+    lastReadTemp.value = lastRead.reversed.toList();
+    print("check bro: ${jsonEncode(lastReadTemp)}");
+  }
 
   Future<void> fetchDataList<T>({
     required RxBool isLoading,
@@ -87,11 +101,11 @@ class HomeScreenController extends GetxController {
   }
 
   /// Get a Single Surah
-  Future<void> getSurah(String surahNumber) async {
-    print("hontouni ayashi desu: $surahNumber");
+  Future<void> getSurah(ListSurahModel surahAsParam) async {
     await fetchData<SurahModel>(
       isLoading: isLoadingSingleSurah,
-      apiCall: () => _homeScreenRepository.getSurah(surahNumber),
+      apiCall: () =>
+          _homeScreenRepository.getSurah("${surahAsParam.surahNumber}"),
       onSuccess: (data) {
         surah.value = data;
         print("${jsonEncode(surah.value)}");
@@ -102,6 +116,12 @@ class HomeScreenController extends GetxController {
       },
       fromJson: (e) => SurahModel.fromJson(e),
     );
+    saveSurahHistory(surahAsParam);
+  }
+
+  void saveSurahHistory(ListSurahModel surahAsParam) async {
+    await isarService.save(surahAsParam);
+    fetchSurahs();
   }
 
   /// Get a Single Juzz
@@ -123,6 +143,7 @@ class HomeScreenController extends GetxController {
   @override
   void dispose() {
     quranPageCtrl.dispose();
+    lastReadPageCtrl.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -131,6 +152,8 @@ class HomeScreenController extends GetxController {
   void onInit() {
     super.onInit();
     quranPageCtrl = PageController();
+    lastReadPageCtrl = PageController();
+    fetchSurahs();
     getListSurah(); // Fetch data on init
     getListJuzz();
   }

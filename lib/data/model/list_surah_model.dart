@@ -1,6 +1,9 @@
-class ListSurahModel {
+import 'package:isar/isar.dart';
+part 'list_surah_model.g.dart';
 
-  int? id;
+@collection
+class ListSurahModel {
+  Id? id = Isar.autoIncrement;
   String? name;
   int? surahNumber;
   String? arabName;

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_common/get_reset.dart';
 import 'package:holy_quran/controller/home_screen_controller.dart';
+import 'package:holy_quran/data/model/list_surah_model.dart';
 import 'package:holy_quran/utils/app_images.dart';
 import 'package:holy_quran/utils/constant.dart';
+import 'package:holy_quran/utils/extensions/last_index_extension.dart';
 import 'package:holy_quran/utils/extensions/spacing_extension.dart';
 import 'package:holy_quran/utils/utils.dart';
 import 'package:holy_quran/view/menu/home/list_of_juzz_screen.dart';
@@ -75,7 +77,8 @@ class HomeScreen extends StatelessWidget {
         ),
         DecoratedBox(
           decoration: BoxDecoration(
-            color: isActive ? const Color(AppColor.primary) : Colors.transparent,
+            color:
+                isActive ? const Color(AppColor.primary) : Colors.transparent,
             borderRadius: const BorderRadius.all(
               Radius.circular(
                 5,
@@ -112,77 +115,145 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _lastRead() {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(
-              20,
-            ),
-          ),
-          child: Image.asset(
-            AppImages.lastReadImg,
-            fit: BoxFit.cover,
-            height: Get.height * 0.15,
-            width: Get.width,
-          ),
-        ),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(
-              0.2,
-            ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(
-                20,
+    return Obx(
+      () {
+        return Stack(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(
+                  20,
+                ),
+              ),
+              child: Image.asset(
+                AppImages.lastReadImg,
+                fit: BoxFit.cover,
+                height: Get.height * 0.2,
+                width: Get.width,
               ),
             ),
-          ),
-          child: SizedBox(
-            height: Get.height * 0.15,
-            width: Get.width,
-          ),
-        ),
-        Positioned(
-          left: 0,
-          child: SizedBox(
-            height: Get.height * 0.15,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(
+                  0.4,
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(
+                    20,
+                  ),
+                ),
+              ),
+              child: SizedBox(
+                height: Get.height * 0.2,
+                width: Get.width,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              child: SizedBox(
+                height: Get.height * 0.2,
+                width: Get.width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      AppImages.lastReadIcon,
-                      scale: 1.8,
+                    Row(
+                      children: [
+                        Image.asset(
+                          AppImages.lastReadIcon,
+                          scale: 1.8,
+                        ),
+                        8.0.horizontalSpace,
+                        Text(
+                          homeC.lastRead.isEmpty
+                              ? "Mulai baca"
+                              : "Terakhir baca",
+                          style: textTheme.bodyMedium!
+                              .copyWith(color: Colors.white, fontSize: 20),
+                        ),
+                      ],
                     ),
-                    8.0.horizontalSpace,
-                    Text(
-                      "Terakhir baca",
-                      style: textTheme.bodyMedium!
-                          .copyWith(color: Colors.white, fontSize: 20),
-                    ),
+                    homeC.lastRead.isEmpty
+                        ? Text(
+                            "Pilih Surat atau Juzz di bawah ini",
+                            style: textTheme.bodyMedium!.copyWith(
+                              color: Colors.white,
+                            ),
+                          )
+                        : _detailLastRead(),
+                    _indicator(),
                   ],
-                ),
-                Text(
-                  "Nama Surat " * 2,
-                  style: textTheme.titleMedium!.copyWith(
-                    color: Colors.white,
+                ).paddingAll(mainMargin),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _indicator() {
+    return Obx(
+      () {
+        return SizedBox(
+          height: 10,
+          width: Get.width,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: List.generate(
+              homeC.lastReadTemp.length,
+              (index) {
+                var isActive = homeC.selectedLastReadIndexPage.value == index;
+                return DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        isActive ? Colors.white : Colors.white.withOpacity(0.3),
                   ),
-                ),
-                Text(
-                  "7 Ayat",
-                  style: textTheme.bodyMedium!.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ).paddingAll(mainMargin),
+                  child: const SizedBox(
+                    height: 10,
+                    width: 10,
+                  ).paddingOnly(right: 4),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        );
+      },
+    );
+  }
+
+  Widget _detailLastRead() {
+    return Expanded(
+      child: PageView.builder(
+        controller: homeC.lastReadPageCtrl,
+        itemCount: homeC.lastReadTemp.length,
+        onPageChanged: (value) {
+          homeC.selectedLastReadIndexPage.value = value;
+        },
+        itemBuilder: (context, index) {
+          var item = homeC.lastReadTemp[index];
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Surat ${item.name}",
+                style: textTheme.titleMedium!.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                "${item.ayahAmount} Ayat",
+                style: textTheme.bodyMedium!.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
