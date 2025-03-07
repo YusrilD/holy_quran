@@ -5,6 +5,7 @@ import '../../../controller/home_screen_controller.dart';
 import '../../../utils/text_theme.dart';
 import '../../../utils/widgets/custom_net_image.dart';
 
+// ignore: must_be_immutable
 class ReadScreen extends StatelessWidget {
   ReadScreen({super.key});
 
@@ -16,24 +17,27 @@ class ReadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: ListView.builder(
-        shrinkWrap: true,
-        itemCount: images.length,
-        padding: EdgeInsets.zero,
-        itemBuilder: (_, index) {
-          var item = images[index];
-          return ImageFromNet(
-            imgUrl: item,
-            shape: BoxShape.rectangle,
-            width: Get.width,
-            height: Get.height * 0.9,
-            boxFit: BoxFit.contain,
-            radiusBottomLeft: 0,
-            radiusBottomRight: 0,
-            radiusTopLeft: 0,
-            radiusTopRight: 0,
-          ).paddingOnly(
-            top: index == 0 ? MediaQuery.of(context).padding.top : 0,
+      body: Obx(
+        () {
+          if (homeC.isLoadingSingleJuzz.value ||
+              homeC.isLoadingSingleSurah.value) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: images.length,
+            padding: EdgeInsets.zero,
+            itemBuilder: (_, index) {
+              var item = images[index];
+              var statusBarHeight = MediaQuery.of(context).padding.top;
+              return ImageFromNet(
+                imgUrl: item,
+              ).paddingOnly(
+                top: index == 0 ? statusBarHeight : 0.0,
+              );
+            },
           );
         },
       ),

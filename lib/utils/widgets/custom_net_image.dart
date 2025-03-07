@@ -3,75 +3,57 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../app_colors.dart';
+import '../text_theme.dart';
 
-class ImageFromNet extends StatelessWidget {
+class ImageFromNet extends StatefulWidget {
   ImageFromNet({
     super.key,
     required this.imgUrl,
-    this.height = 50,
-    this.width = 50,
-    this.radiusTopLeft = 10,
-    this.radiusTopRight = 10,
-    this.radiusBottomLeft = 10,
-    this.radiusBottomRight = 10,
-    this.borderWidth = 1,
-    this.boxFit = BoxFit.cover,
-    required this.shape,
   });
 
   String imgUrl;
-  double width;
-  double height;
-  double radiusTopLeft;
-  double radiusTopRight;
-  double radiusBottomLeft;
-  double radiusBottomRight;
-  double borderWidth;
-  BoxFit boxFit;
-  BoxShape shape;
+
+  @override
+  State<ImageFromNet> createState() => _ImageFromNetState();
+}
+
+class _ImageFromNetState extends State<ImageFromNet> {
+  int _retry = 0; // Change key to force reload
+
+  void _reloadImage() {
+    setState(() {
+      _retry++; // Change key to reload image
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    var statusBarHeight = MediaQuery.of(context).padding.top;
     return CachedNetworkImage(
-      imageUrl: imgUrl,
-
-      imageBuilder: (context, imageProvider) => Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(radiusTopLeft),
-            topRight: Radius.circular(radiusTopRight),
-            bottomLeft: Radius.circular(radiusBottomLeft),
-            bottomRight: Radius.circular(radiusBottomRight),
-          ),
-          image: DecorationImage(
-            image: imageProvider,
-            fit: boxFit,
-            alignment: Alignment.topCenter,
-          ),
-        ),
-      ),
+      key: ValueKey(_retry),
+      imageUrl: widget.imgUrl,
       placeholder: (context, url) {
-        return SizedBox(
-          height: height,
-          width: Get.width,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+        return const SizedBox(
+          height: 50,
+          width: 50,
+        ).paddingOnly(
+          top: statusBarHeight,
         );
-        // ShimmerEffect(width: width, height: height, shape: shape);
       },
-      errorWidget: (context, url, error) => SizedBox(
-        width: width,
-        height: height,
-        child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: const Color(AppColor.primary),
+      errorWidget: (context, url, error) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error, color: Colors.red),
+          TextButton.icon(
+            onPressed: _reloadImage,
+            icon: const Icon(Icons.refresh),
+            label: Text(
+              "Muat Ulang",
+              style: AppTextTheme.getTextTheme().bodyMedium,
             ),
-            child: const Icon(Icons.image_outlined)),
-      ) /*const Icon(Icons.error)*/,
+          ),
+        ],
+      ),
     );
   }
 }

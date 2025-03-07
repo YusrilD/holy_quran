@@ -7,11 +7,9 @@ import 'package:holy_quran/data/model/list_surah_model.dart';
 import 'package:holy_quran/data/model/surah_model.dart';
 import 'package:holy_quran/data/repository/home_screen_repository.dart';
 import 'package:holy_quran/routes/app_routes.dart';
-import 'package:holy_quran/view/menu/home/list_of_surah_screen.dart';
 
 import '../data/database/isar_service.dart';
 import '../data/model/list_juzz_model.dart';
-import '../view/menu/home/list_of_juzz_screen.dart';
 
 class HomeScreenController extends GetxController {
   final IsarService isarService = IsarService();
@@ -38,9 +36,34 @@ class HomeScreenController extends GetxController {
   void fetchSurahs() async {
     final allSurahs = await isarService.getAll<ListSurahModel>();
     lastRead.assignAll(allSurahs);
+    print("coba cek sik rene: ${jsonEncode(lastRead)}");
+    // Reverse the list
     lastReadTemp.value = lastRead.reversed.toList();
-    print("check bro: ${jsonEncode(lastReadTemp)}");
+    print("nek ilang ga mungkin: ${jsonEncode(lastReadTemp)}");
+
+// Keep only the latest 3 by removing excess elements
+    if (lastReadTemp.length > 3) {
+      lastReadTemp.removeRange(3, lastReadTemp.length);
+    }
+
+    print("coba cek sik runu: ${jsonEncode(lastReadTemp)}");
+    // lastRead.assignAll(allSurahs.take(3).toList());
   }
+
+  // void leaveItThree() async {
+  //   await isarService.delete<Surah>(id);
+
+  //   // Fetch all Surahs from the database
+  //   final allSurahs = await isarService.getAll<Surah>();
+
+  //   // If there are more than 3, delete the oldest ones
+  //   if (allSurahs.length > 3) {
+  //     allSurahs.sort((a, b) => b.id.compareTo(a.id)); // Sort by newest first
+  //     for (int i = 3; i < allSurahs.length; i++) {
+  //       await isarService.delete<Surah>(allSurahs[i].id);
+  //     }
+  //   }
+  // }
 
   Future<void> fetchDataList<T>({
     required RxBool isLoading,

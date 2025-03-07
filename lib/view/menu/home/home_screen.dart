@@ -176,7 +176,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     homeC.lastRead.isEmpty
                         ? Text(
-                            "Pilih Surat atau Juzz di bawah ini",
+                            "Pilih Surat atau Juzz\ndi bawah ini",
                             style: textTheme.bodyMedium!.copyWith(
                               color: Colors.white,
                             ),
