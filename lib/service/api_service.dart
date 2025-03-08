@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService extends GetxService {
   final String _baseUrl = "https://dpplaboratory.online/public/api";
+  final String _prayScheduleUrl = "https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/";
+  // https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/malang/2025/03.json
   RxBool isLoggedIn = false.obs;
   String? _authToken;
 
@@ -62,6 +64,33 @@ class ApiService extends GetxService {
   // Generic GET request
   Future<dynamic> getRequest(String endpoint) async {
     final url = Uri.parse("$_baseUrl$endpoint");
+    print("yuru yuri: $url");
+    try {
+      final response = await http.get(
+        url,
+        headers: _headers(),
+      );
+      print("I need the response: ${response.statusCode}");
+      if (response.statusCode == 401) {
+        final newToken = await refreshToken();
+        if (newToken != null) {
+          final retryResponse = await http.get(
+            url,
+            headers: _headers(),
+          );
+          return _handleResponse(retryResponse);
+        } else {
+          throw Exception("Token refresh failed in get and url: $url");
+        }
+      }
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception("GET request failed: $e");
+    }
+  }
+
+  Future<dynamic> getPraySchedule(String endpoint) async {
+    final url = Uri.parse("$_prayScheduleUrl$endpoint");
     print("yuru yuri: $url");
     try {
       final response = await http.get(

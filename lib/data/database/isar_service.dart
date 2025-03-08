@@ -8,7 +8,9 @@ class IsarService {
   static late Isar isar; // Global Isar instance
 
   static final IsarService _instance = IsarService._internal();
+
   factory IsarService() => _instance;
+
   IsarService._internal();
 
   /// Initialize Isar Database
@@ -35,6 +37,13 @@ class IsarService {
   /// Read by ID
   Future<T?> getById<T>(int id) async {
     return await isar.collection<T>().get(id);
+  }
+
+  Future<List<ListSurahModel>> getBySavingType(String type) async {
+    return await isar.listSurahModels
+        .filter()
+        .savingTypeEqualTo(type)
+        .findAll();
   }
 
   /// Delete by ID

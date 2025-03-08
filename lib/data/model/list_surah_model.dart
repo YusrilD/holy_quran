@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+
 part 'list_surah_model.g.dart';
 
 @collection
@@ -8,6 +9,7 @@ class ListSurahModel {
   int? surahNumber;
   String? arabName;
   String? surahType;
+  String? savingType;
   int? ayahAmount;
   int? startAyah;
   int? endAyah;
@@ -20,6 +22,7 @@ class ListSurahModel {
     this.surahNumber,
     this.arabName,
     this.surahType,
+    this.savingType,
     this.ayahAmount,
     this.startAyah,
     this.endAyah,
@@ -33,12 +36,15 @@ class ListSurahModel {
     surahNumber = json['surah_number']?.toInt();
     arabName = json['arab_name']?.toString();
     surahType = json['surah_type']?.toString();
+    savingType =
+        json['surah_type'] == null ? "" : json['surah_type'].toString();
     ayahAmount = json['ayah_amount']?.toInt();
     startAyah = json['start_ayah']?.toInt();
     endAyah = json['end_ayah']?.toInt();
     createdAt = json['created_at']?.toString();
     updatedAt = json['updated_at']?.toString();
   }
+
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;

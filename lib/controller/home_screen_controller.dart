@@ -7,6 +7,10 @@ import 'package:holy_quran/data/model/list_surah_model.dart';
 import 'package:holy_quran/data/model/surah_model.dart';
 import 'package:holy_quran/data/repository/home_screen_repository.dart';
 import 'package:holy_quran/routes/app_routes.dart';
+import 'package:holy_quran/utils/constant.dart';
+import 'package:holy_quran/utils/constant.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../data/database/isar_service.dart';
 import '../data/model/list_juzz_model.dart';
@@ -14,6 +18,7 @@ import '../data/model/list_juzz_model.dart';
 class HomeScreenController extends GetxController {
   final IsarService isarService = IsarService();
   final _homeScreenRepository = Get.find<HomeScreenRepository>();
+
   var listSurah = <ListSurahModel>[].obs;
   var listJuzz = <ListJuzzModel>[].obs;
   var surah = SurahModel().obs;
@@ -22,6 +27,7 @@ class HomeScreenController extends GetxController {
 
   var lastRead = <ListSurahModel>[].obs;
   var lastReadTemp = <ListSurahModel>[].obs;
+  var listOfFavoriteSurah = <ListSurahModel>[].obs;
 
   var isLoadingSurah = false.obs;
   var isLoadingJuzz = false.obs;
@@ -34,36 +40,17 @@ class HomeScreenController extends GetxController {
   late PageController lastReadPageCtrl;
 
   void fetchSurahs() async {
-    final allSurahs = await isarService.getAll<ListSurahModel>();
+    final allSurahs = await isarService.getBySavingType(saveAsLastRead);
+    final favoriteSurah = await isarService.getBySavingType(saveAsFavorite);
+    listOfFavoriteSurah.assignAll(favoriteSurah);
     lastRead.assignAll(allSurahs);
-    print("coba cek sik rene: ${jsonEncode(lastRead)}");
-    // Reverse the list
     lastReadTemp.value = lastRead.reversed.toList();
-    print("nek ilang ga mungkin: ${jsonEncode(lastReadTemp)}");
-
-// Keep only the latest 3 by removing excess elements
     if (lastReadTemp.length > 3) {
       lastReadTemp.removeRange(3, lastReadTemp.length);
     }
-
-    print("coba cek sik runu: ${jsonEncode(lastReadTemp)}");
-    // lastRead.assignAll(allSurahs.take(3).toList());
+    print("lastRead: ${jsonEncode(lastReadTemp)}");
+    print("favorite: ${jsonEncode(listOfFavoriteSurah)}");
   }
-
-  // void leaveItThree() async {
-  //   await isarService.delete<Surah>(id);
-
-  //   // Fetch all Surahs from the database
-  //   final allSurahs = await isarService.getAll<Surah>();
-
-  //   // If there are more than 3, delete the oldest ones
-  //   if (allSurahs.length > 3) {
-  //     allSurahs.sort((a, b) => b.id.compareTo(a.id)); // Sort by newest first
-  //     for (int i = 3; i < allSurahs.length; i++) {
-  //       await isarService.delete<Surah>(allSurahs[i].id);
-  //     }
-  //   }
-  // }
 
   Future<void> fetchDataList<T>({
     required RxBool isLoading,
@@ -139,10 +126,15 @@ class HomeScreenController extends GetxController {
       },
       fromJson: (e) => SurahModel.fromJson(e),
     );
-    saveSurahHistory(surahAsParam);
+    saveSurah(
+      surahAsParam,
+      SavingType.lastRead,
+    );
   }
 
-  void saveSurahHistory(ListSurahModel surahAsParam) async {
+  void saveSurah(ListSurahModel surahAsParam, SavingType type) async {
+    surahAsParam.savingType =
+        type == SavingType.lastRead ? saveAsLastRead : saveAsFavorite;
     await isarService.save(surahAsParam);
     fetchSurahs();
   }
@@ -180,4 +172,9 @@ class HomeScreenController extends GetxController {
     getListSurah(); // Fetch data on init
     getListJuzz();
   }
+}
+
+enum SavingType {
+  lastRead,
+  favorite,
 }
