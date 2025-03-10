@@ -20,38 +20,44 @@ class ListOfSurahScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () {
-        if (homeC.isLoadingSurah.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return ListView(
-          padding: EdgeInsets.zero,
-          children: List.generate(
-            homeC.listSurah.length,
-            (index) {
-              var item = homeC.listSurah[index];
-              return Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      homeC.getSurah(item);
-                    },
-                    child: _listTile(item),
-                  ),
-                  const Divider(),
-                ],
+    return OrientationBuilder(
+      builder: (ctx, ori) {
+        return Obx(
+          () {
+            if (homeC.isLoadingSurah.value) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            },
-          ),
+            }
+            return ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              children: List.generate(
+                homeC.listSurah.length,
+                (index) {
+                  var item = homeC.listSurah[index];
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          homeC.getSurah(item);
+                        },
+                        child: _listTile(item, ori),
+                      ),
+                      const Divider(),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _listTile(ListSurahModel item) {
+  Widget _listTile(ListSurahModel item, Orientation ori) {
     return Obx(
       () {
         var isFavorite = homeC.listOfFavoriteSurah.any(
@@ -59,83 +65,80 @@ class ListOfSurahScreen extends StatelessWidget {
             return e.name == item.name && e.ayahAmount == item.ayahAmount;
           },
         );
-        // print("checking the item : ${item.name} is it contain in: $isFavorite");
-        return Column(
+        return Row(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: DecoratedBox(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: ExactAssetImage(
-                          AppImages.numberingIcon,
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      "${item.surahNumber}",
-                      // maxLines: 1,
-                      // overflow: TextOverflow.fade,
-                      textAlign: TextAlign.center,
-                      style: textTheme.bodySmall,
-                    ).paddingAll(12),
+            DecoratedBox(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: ExactAssetImage(
+                    AppImages.numberingIcon,
                   ),
                 ),
-                // 8.0.horizontalSpace,
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${item.name}",
-                        style: textTheme.bodyMedium,
-                      ),
-                      Text(
-                        "${item.surahType} | ${item.ayahAmount} ayat",
-                        style: textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
+              ),
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "${item.surahNumber}",
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodySmall,
+                  ).paddingAll(16),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    width: Get.width * 0.3,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${item.arabName}",
-                          style: textTheme.titleMedium!.copyWith(
-                            color: const Color(
-                              AppColor.primary,
-                            ),
-                          ),
-                        ),
-                        8.0.horizontalSpace,
-                        InkWell(
-                          onTap: () {
-                            print("fav kepencet");
-                            homeC.saveSurah(item, SavingType.favorite);
-                          },
-                          child: isFavorite
-                              ? const Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                )
-                              : const Icon(
-                                  Icons.favorite_outline_rounded,
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-            // const Divider()
+            mainMargin.horizontalSpace,
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${item.name}",
+                    style: textTheme.bodyMedium,
+                  ),
+                  Text(
+                    "${item.surahType} | ${item.ayahAmount} ayat",
+                    style: textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: SizedBox(
+                width: Get.width * 0.3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${item.arabName}",
+                      style: textTheme.titleMedium!.copyWith(
+                        color: const Color(
+                          AppColor.primary,
+                        ),
+                      ),
+                    ),
+                    8.0.horizontalSpace,
+                    InkWell(
+                      onTap: () {
+                        print("fav kepencet");
+                        homeC.saveSurah(item, SavingType.favorite);
+                      },
+                      child: isFavorite
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : const Icon(
+                              Icons.favorite_outline_rounded,
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ).paddingSymmetric(vertical: 8.0);
       },

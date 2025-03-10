@@ -14,7 +14,6 @@ class UserController extends GetxController {
 
   void checkUser() async {
     final userFromDB = await isarService.getFirst<UserModel>();
-
     if (userFromDB == null) {
       CustomDialogs.showFreeWidgetDialog(
         Get.context!,
@@ -37,6 +36,7 @@ class UserController extends GetxController {
         ),
       );
     } else {
+      user.assign(userFromDB);
       Get.toNamed(
         AppRoutes.dashboardScreen,
       );

@@ -140,10 +140,10 @@ class HomeScreenController extends GetxController {
   }
 
   /// Get a Single Juzz
-  Future<void> getJuzz(JuzzModel juzzAsParam) async {
+  Future<void> getJuzz(ListJuzzModel juzzAsParam) async {
     await fetchData<JuzzModel>(
       isLoading: isLoadingSingleJuzz,
-      apiCall: () => _homeScreenRepository.getJuzz("${juzzAsParam.juzz}"),
+      apiCall: () => _homeScreenRepository.getJuzz("${juzzAsParam.juzzNumber}"),
       onSuccess: (data) {
         juzz.value = data;
         Get.toNamed(
