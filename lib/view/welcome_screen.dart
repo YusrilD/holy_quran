@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:holy_quran/controller/user_controller.dart';
 import 'package:holy_quran/routes/app_routes.dart';
 import 'package:holy_quran/utils/extensions/spacing_extension.dart';
 import 'package:holy_quran/utils/widgets/custom_button.dart';
@@ -12,10 +13,12 @@ class WelcomeScreen extends StatelessWidget {
   WelcomeScreen({super.key});
 
   var textTheme = AppTextTheme.getTextTheme();
+  var userC = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SizedBox(
         height: Get.height,
@@ -57,9 +60,7 @@ class WelcomeScreen extends StatelessWidget {
                       text: "Mulai Mengaji",
                       width: Get.width * 0.5,
                       onPressed: () {
-                        Get.toNamed(
-                          AppRoutes.dashboardScreen,
-                        );
+                        userC.checkUser();
                       },
                       color: AppColor.amber,
                     ),

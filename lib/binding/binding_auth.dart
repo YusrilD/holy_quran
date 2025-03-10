@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:holy_quran/controller/auth_controller.dart';
+import 'package:holy_quran/controller/user_controller.dart';
 import 'package:holy_quran/data/repository/auth_repository.dart';
 
 class AuthBinding extends Bindings{
@@ -7,6 +8,7 @@ class AuthBinding extends Bindings{
   void dependencies() {
     Get.put(AuthRepository());
     Get.put(AuthController());
+    Get.put(UserController());
     // TODO: implement dependencies
   }
 }

@@ -1,4 +1,5 @@
 import 'package:holy_quran/data/model/list_surah_model.dart';
+import 'package:holy_quran/data/model/user/user_model.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,8 +17,14 @@ class IsarService {
   /// Initialize Isar Database
   static Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
+    print('Available schemas: ${[UserModelSchema, ListJuzzModelSchema, ListSurahModelSchema]}');
     isar = await Isar.open(
-      [ListJuzzModelSchema, ListSurahModelSchema], // Add your schemas here
+      [
+        UserModelSchema,
+        ListJuzzModelSchema,
+        ListSurahModelSchema,
+      ],
+      // Add your schemas here
       directory: dir.path,
     );
   }
@@ -51,5 +58,9 @@ class IsarService {
     await isar.writeTxn(() async {
       await isar.collection<T>().delete(id);
     });
+  }
+
+  Future<T?> getFirst<T>() async {
+    return await isar.collection<T>().where().findFirst();
   }
 }

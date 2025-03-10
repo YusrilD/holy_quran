@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_common/get_reset.dart';
 import 'package:holy_quran/controller/home_screen_controller.dart';
+import 'package:holy_quran/controller/user_controller.dart';
 import 'package:holy_quran/data/model/list_surah_model.dart';
 import 'package:holy_quran/utils/app_images.dart';
 import 'package:holy_quran/utils/constant.dart';
@@ -19,6 +20,7 @@ class HomeScreen extends StatelessWidget {
 
   var textTheme = AppTextTheme.getTextTheme();
   var homeC = Get.find<HomeScreenController>();
+  var userC = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -267,18 +269,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _greeting() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Assalamulaikum",
-          style: textTheme.bodyMedium,
-        ),
-        Text(
-          "Yuk ngaji, ${greetings()} ini",
-          style: textTheme.titleMedium,
-        ),
-      ],
+    return Text(
+      "Assalamulaikum ${userC.user.first.name}, yuk ngaji, ${greetings()} ini",
+      style: textTheme.bodyMedium,
     );
   }
 }
