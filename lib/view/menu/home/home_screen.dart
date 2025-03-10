@@ -179,21 +179,65 @@ class HomeScreen extends StatelessWidget {
 
   Widget _pageController() {
     var listItem = ["Surat", "Juzz"];
+    var viewItem = [
+      Icons.list_rounded,
+      Icons.grid_on_rounded,
+    ];
     return Obx(
       () {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: List.generate(
-            listItem.length,
-            (index) {
-              var isActive = homeC.selectedIndexPage.value == index;
-              return _itemColumn(listItem[index], isActive, index).paddingOnly(
-                right: mainMargin,
-              );
-            },
-          ),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(
+                listItem.length,
+                (index) {
+                  var isActive = homeC.selectedIndexPage.value == index;
+                  return _itemColumn(listItem[index], isActive, index)
+                      .paddingOnly(
+                    right: mainMargin,
+                  );
+                },
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: List.generate(
+                viewItem.length,
+                (index) {
+                  var isActive = homeC.selectedViewPage.value == index;
+                  return _itemView(viewItem[index], isActive, index)
+                      .paddingOnly(
+                    right: mainMargin / 2,
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
+    );
+  }
+
+  Widget _itemView(IconData icon, bool isActive, int index) {
+    return InkWell(
+      onTap: () {
+        homeC.selectedViewPage.value = index;
+      },
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isActive ? const Color(AppColor.primary) : Colors.transparent,
+        ),
+        child: Icon(
+          icon,
+          color: isActive
+              ? Colors.white
+              : const Color(
+                  AppColor.primary,
+                ),
+        ),
+      ),
     );
   }
 
@@ -203,6 +247,7 @@ class HomeScreen extends StatelessWidget {
         homeC.selectedIndexPage.value = index;
       },
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             item,

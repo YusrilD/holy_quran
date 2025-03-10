@@ -34,6 +34,7 @@ class HomeScreenController extends GetxController {
   var isLoadingSingleSurah = false.obs;
   var isLoadingSingleJuzz = false.obs;
   var selectedIndexPage = 0.obs;
+  var selectedViewPage = 0.obs;
   var selectedLastReadIndexPage = 0.obs;
 
   late PageController quranPageCtrl;
