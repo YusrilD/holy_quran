@@ -45,12 +45,18 @@ class HomeScreenController extends GetxController {
     final favoriteSurah = await isarService.getBySavingType(saveAsFavorite);
     listOfFavoriteSurah.assignAll(favoriteSurah);
     lastRead.assignAll(allSurahs);
+    var lastReadDb = lastRead.reversed.toList();
     lastReadTemp.value = lastRead.reversed.toList();
+    // Delete extra records from Isar
+    print("check panjang list: ${lastReadDb.length}");
+
     if (lastReadTemp.length > 3) {
       lastReadTemp.removeRange(3, lastReadTemp.length);
     }
-    print("lastRead: ${jsonEncode(lastReadTemp)}");
-    print("favorite: ${jsonEncode(listOfFavoriteSurah)}");
+    for (int i = 3; i < lastReadDb.length; i++) {
+      print("how many loops exist: $i");
+      await isarService.delete<ListSurahModel>(lastReadDb[i].id!);
+    }
   }
 
   Future<void> fetchDataList<T>({
@@ -131,6 +137,7 @@ class HomeScreenController extends GetxController {
       surahAsParam,
       SavingType.lastRead,
     );
+    selectedLastReadIndexPage.value = 0;
   }
 
   void saveSurah(ListSurahModel surahAsParam, SavingType type) async {

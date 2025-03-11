@@ -54,11 +54,25 @@ class IsarService {
   }
 
   /// Delete by ID
+  // Future<void> delete<T>(int id) async {
+  //   await isar.writeTxn(() async {
+  //     await isar.collection<T>().delete(id);
+  //   });
+  // }
+
   Future<void> delete<T>(int id) async {
-    await isar.writeTxn(() async {
-      await isar.collection<T>().delete(id);
-    });
-  }
+  await isar.writeTxn(() async {
+    final collection = isar.collection<T>();
+
+    bool exists = await collection.get(id) != null;
+    if (exists) {
+      await collection.delete(id);
+      print("Deleted item with ID: $id");
+    } else {
+      print("Item with ID $id not found, skipping deletion.");
+    }
+  });
+}
 
   Future<T?> getFirst<T>() async {
     return await isar.collection<T>().where().findFirst();

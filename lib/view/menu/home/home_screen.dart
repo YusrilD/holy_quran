@@ -9,6 +9,8 @@ import 'package:holy_quran/utils/constant.dart';
 import 'package:holy_quran/utils/extensions/last_index_extension.dart';
 import 'package:holy_quran/utils/extensions/spacing_extension.dart';
 import 'package:holy_quran/utils/utils.dart';
+import 'package:holy_quran/view/menu/home/grid_of_juzz_screen.dart';
+import 'package:holy_quran/view/menu/home/grid_of_surah_screen.dart';
 import 'package:holy_quran/view/menu/home/list_of_juzz_screen.dart';
 import 'package:holy_quran/view/menu/home/list_of_surah_screen.dart';
 
@@ -43,9 +45,16 @@ class HomeScreen extends StatelessWidget {
                 Obx(
                   () {
                     if (homeC.selectedIndexPage.value == 0) {
+                      if (homeC.selectedViewPage.value == 1) {
+                        return GridOfSurahScreen();
+                      }
                       return ListOfSurahScreen();
+                    } else {
+                      if (homeC.selectedViewPage.value == 1) {
+                        return GridOfJuzzScreen();
+                      }
+                      return ListOfJuzzScreen();
                     }
-                    return ListOfJuzzScreen();
                   },
                 ),
               ],
@@ -69,9 +78,16 @@ class HomeScreen extends StatelessWidget {
               Obx(
                 () {
                   if (homeC.selectedIndexPage.value == 0) {
+                    if (homeC.selectedViewPage.value == 1) {
+                      return GridOfSurahScreen();
+                    }
                     return ListOfSurahScreen();
+                  } else {
+                    if (homeC.selectedViewPage.value == 1) {
+                      return GridOfJuzzScreen();
+                    }
+                    return ListOfJuzzScreen();
                   }
-                  return ListOfJuzzScreen();
                 },
               ),
 

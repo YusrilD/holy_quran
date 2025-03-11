@@ -41,6 +41,7 @@ class ListOfSurahScreen extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
+                          
                           homeC.getSurah(item);
                         },
                         child: _listTile(item, ori),
@@ -84,7 +85,7 @@ class ListOfSurahScreen extends StatelessWidget {
                     "${item.surahNumber}",
                     textAlign: TextAlign.center,
                     style: textTheme.bodySmall,
-                  ).paddingAll(16),
+                  ).paddingAll(8),
                 ),
               ),
             ),
