@@ -42,6 +42,7 @@ class WelcomeScreen extends StatelessWidget {
                   AppImages.welcomeImg,
                   color: Colors.white,
                   width: Get.width * 0.9,
+                  height: Get.height * 0.61,
                   fit: BoxFit.cover,
                 ),
                 Positioned.fill(
@@ -49,7 +50,9 @@ class WelcomeScreen extends StatelessWidget {
                     alignment: Alignment.topCenter,
                     child: Image.asset(
                       AppImages.welcomeImg,
-                      scale: 1.9,
+                      // scale: 1.9,
+                      width: Get.width * 0.8,
+                      height: Get.height * 0.6,
                     ),
                   ),
                 ),
