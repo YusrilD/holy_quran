@@ -12,6 +12,7 @@ class CustomTextField {
     TextStyle? labelStyle,
     TextInputType keyboardType = TextInputType.text,
     bool? enabled,
+    bool autoFocus = false,
   }) {
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -28,6 +29,7 @@ class CustomTextField {
       child: TextFormField(
         controller: controller,
         enabled: enabled ?? true,
+        autofocus: autoFocus,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: labelStyle,

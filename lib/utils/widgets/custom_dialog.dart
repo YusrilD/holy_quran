@@ -189,10 +189,12 @@ class CustomDialogs {
       context: context,
       barrierDismissible: true,
       useRootNavigator: false,
+      
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
           content: widget,
+          backgroundColor: Colors.white,
           actions: <Widget>[
             TextButton(
               onPressed: onCancel ??
