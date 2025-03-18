@@ -10,7 +10,7 @@ import '../view/menu/home/read_screen.dart';
 import '../view/welcome_screen.dart';
 
 class AppPages {
-  static const INITIAL = AppRoutes.welcomeScreen;
+  static const initial = AppRoutes.welcomeScreen;
 
   static final routes = [
     GetPage(
