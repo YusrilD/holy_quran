@@ -13,6 +13,7 @@ import 'package:holy_quran/view/menu/home/grid_of_juzz_screen.dart';
 import 'package:holy_quran/view/menu/home/grid_of_surah_screen.dart';
 import 'package:holy_quran/view/menu/home/list_of_juzz_screen.dart';
 import 'package:holy_quran/view/menu/home/list_of_surah_screen.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/text_theme.dart';
@@ -36,13 +37,21 @@ class HomeScreen extends StatelessWidget {
                 (kToolbarHeight / 2).verticalSpace,
                 // _appBar(),
                 // mainMargin.verticalSpace,
-                _greeting(),
+                _greeting().paddingSymmetric(
+                  horizontal: 16.0,
+                ),
                 8.0.verticalSpace,
-                _lastRead(),
+                _lastRead().paddingSymmetric(
+                  horizontal: 16.0,
+                ),
+                Lottie.asset(
+                  'assets/lottie/list_to_grid.json',
+                  width: 20,
+                  height: 20,
+                ),
                 mainMargin.verticalSpace,
                 _pageController(),
                 8.0.verticalSpace,
-                const Divider(),
                 Obx(
                   () {
                     if (homeC.selectedIndexPage.value == 0) {
@@ -57,11 +66,11 @@ class HomeScreen extends StatelessWidget {
                       return ListOfJuzzScreen();
                     }
                   },
+                ).paddingSymmetric(
+                  vertical: 8,
+                  horizontal: 16.0,
                 ),
               ],
-            ).paddingSymmetric(
-              vertical: 8,
-              horizontal: 16.0,
             );
           }
           return ListView(
@@ -202,34 +211,80 @@ class HomeScreen extends StatelessWidget {
     ];
     return Obx(
       () {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(
-                listItem.length,
-                (index) {
-                  var isActive = homeC.selectedIndexPage.value == index;
-                  return _itemColumn(listItem[index], isActive, index)
-                      .paddingOnly(
-                    right: mainMargin,
-                  );
-                },
-              ),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: List.generate(
+                    listItem.length,
+                    (index) {
+                      var isActive = homeC.selectedIndexPage.value == index;
+                      return _itemColumn(listItem[index], isActive, index);
+                    },
+                  ),
+                ).paddingSymmetric(
+                  vertical: 8,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: List.generate(
+                    viewItem.length,
+                    (index) {
+                      var isActive = homeC.selectedViewPage.value == index;
+                      return _itemView(viewItem[index], isActive, index)
+                          .paddingOnly(
+                        right: mainMargin / 2,
+                      );
+                    },
+                  ),
+                ).paddingSymmetric(
+                  vertical: 8,
+                  horizontal: 16.0,
+                ),
+              ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: List.generate(
-                viewItem.length,
-                (index) {
-                  var isActive = homeC.selectedViewPage.value == index;
-                  return _itemView(viewItem[index], isActive, index)
-                      .paddingOnly(
-                    right: mainMargin / 2,
-                  );
-                },
-              ),
+            Stack(
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                  ),
+                  child: SizedBox(
+                    height: 4,
+                    width: Get.width,
+                  ),
+                ),
+                Positioned(
+                  child: Row(
+                    children: List.generate(
+                      2,
+                      (index) {
+                        var isActive = homeC.selectedIndexPage.value == index;
+                        var item = listItem[index];
+                        return DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? const Color(AppColor.primary)
+                                : Colors.transparent,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(
+                                5,
+                              ),
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: 4,
+                            width: (16 * item.length).toDouble(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -263,38 +318,23 @@ class HomeScreen extends StatelessWidget {
       onTap: () {
         homeC.selectedIndexPage.value = index;
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            item,
-            style: textTheme.bodyMedium!.copyWith(
-              color: isActive
-                  ? const Color(AppColor.primary)
-                  : const Color(
-                      AppColor.secondary,
-                    ),
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-              fontSize: 20,
-              letterSpacing: 1,
-            ),
+      child: SizedBox(
+        // height: 4,
+        width: (16 * item.length).toDouble(),
+        child: Text(
+          item,
+          textAlign: TextAlign.center,
+          style: textTheme.bodyMedium!.copyWith(
+            color: isActive
+                ? const Color(AppColor.primary)
+                : const Color(
+                    AppColor.secondary,
+                  ),
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+            fontSize: 20,
+            letterSpacing: 1,
           ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color:
-                  isActive ? const Color(AppColor.primary) : Colors.transparent,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(
-                  5,
-                ),
-              ),
-            ),
-            child: SizedBox(
-              height: 4,
-              width: (12 * item.length).toDouble(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -343,24 +383,25 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Image.asset(
-                  AppImages.lastReadIcon,
-                  scale: 1.8,
-                  color: const Color(AppColor.secondary),
-                ),
-                8.0.horizontalSpace,
-                Text(
-                  homeC.lastRead.isEmpty ? "Mulai baca" : "Terakhir baca",
-                  style: textTheme.bodyMedium,
-                ),
-              ],
-            ),
+            if (homeC.lastRead.isNotEmpty)
+              Row(
+                children: [
+                  Image.asset(
+                    AppImages.lastReadIcon,
+                    scale: 1.8,
+                    color: const Color(AppColor.secondary),
+                  ),
+                  8.0.horizontalSpace,
+                  Text(
+                    "Terakhir baca",
+                    style: textTheme.bodyMedium,
+                  ),
+                ],
+              ),
             4.0.verticalSpace,
             homeC.lastRead.isEmpty
                 ? Text(
-                    "Pilih Surat atau Juzz\ndi bawah ini",
+                    "Pilih Surat atau Juzz\ndi bawah ini.",
                     style: textTheme.bodyMedium,
                   )
                 : _detailLastRead(),

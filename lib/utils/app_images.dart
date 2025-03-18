@@ -8,4 +8,5 @@ class AppImages{
   static const String lastReadIcon = 'assets/images/last_read_icon.png';
   static const String prayScheduleIcon = 'assets/images/pray.png';
   static const String welcomeImg = 'assets/images/welcome.png';
+  static const String listToGridLottie = 'assets/lottie/list_to_grid.json';
 }
