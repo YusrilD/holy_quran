@@ -16,37 +16,47 @@ class UserController extends GetxController {
   var tecUsername = TextEditingController().obs;
   var user = <UserModel>[].obs;
   var textTheme = AppTextTheme.getTextTheme();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void checkUser() async {
     final userFromDB = await isarService.getFirst<UserModel>();
     if (userFromDB == null) {
       CustomDialogs.showFreeWidgetDialog(
-        
         Get.context!,
-        title: "Assalamu\'alaikum",
+        title: "Assalamu'alaikum",
         content: "Mohon isikan nama Anda!",
         onConfirm: () {
-          saveSurah(tecUsername.value.text);
+          if (_formKey.currentState!.validate()) {
+            saveSurah(tecUsername.value.text);
+          }
         },
         widget: ColoredBox(
           color: Colors.white,
           child: SizedBox(
             height: Get.height * 0.2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Selamat datang di Qur'anku, isikan nama Anda untuk memulai baca.",
-                  style: textTheme.bodySmall,
-                ),
-                mainMargin.verticalSpace,
-                CustomTextField.normalTextFormField(
-                  label: "Nama",
-                  hint: "Isikan Nama",
-                  controller: tecUsername.value,
-                  autoFocus: true,
-                ),
-              ],
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Selamat datang di Qur'anku, isikan nama Anda untuk memulai baca.",
+                    style: textTheme.bodySmall,
+                  ),
+                  mainMargin.verticalSpace,
+                  CustomTextField.normalTextFormField(
+                    label: "Nama",
+                    hint: "Isikan Nama",
+                    controller: tecUsername.value,
+                    autoFocus: true,
+                    onChanged: (value) {
+                      if (_formKey.currentState!.validate()) {
+                        saveSurah(tecUsername.value.text);
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
