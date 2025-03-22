@@ -1,13 +1,18 @@
+import 'dart:convert';
+
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:holy_quran/data/model/pray/pray_model.dart';
+import 'package:holy_quran/data/repository/pray_screen_repository.dart';
 
-class PrayScheduleController extends GetxController{
-
+class PrayScheduleController extends GetxController {
   var latitude = 0.0.obs;
   var longitude = 0.0.obs;
   var address = "Press button to get location".obs;
   var isLoading = false.obs;
+  final _prayScreenRepository = Get.find<PrayScreenRepository>();
+  var listOfPraySchedule = <PrayModel>[].obs;
 
   var regency = "".obs; // Observable variable to store regency (kabupaten/kota)
 
@@ -27,7 +32,7 @@ class PrayScheduleController extends GetxController{
 
       // Reverse geocode to get address
       List<Placemark> placemarks =
-      await placemarkFromCoordinates(position.latitude, position.longitude);
+          await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placemarks.isNotEmpty) {
         regency.value = placemarks[0].subAdministrativeArea ??
@@ -60,13 +65,13 @@ class PrayScheduleController extends GetxController{
       longitude.value = position.longitude;
 
       // Convert to address
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          latitude.value, longitude.value);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude.value, longitude.value);
 
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         address.value =
-        "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
+            "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
       } else {
         address.value = "Address not found!";
       }
@@ -77,4 +82,42 @@ class PrayScheduleController extends GetxController{
     }
   }
 
+  Future<void> getData() async {
+    isLoading.value = true;
+    try {
+      await getRegency();
+      final response = await _prayScreenRepository.getPraySchedule(
+        location: regency.value
+            .replaceAll("Kabupaten", "")
+            .replaceAll("Kota", "")
+            .replaceAll(" ", "")
+            .toLowerCase(),
+        year: "${DateTime.now().year}",
+        month: "${DateTime.now().month}".length == 1
+            ? "0${DateTime.now().month}"
+            : "${DateTime.now().month}",
+      );
+
+      print("checking the response: $response");
+      var schedule = jsonEncode(response);
+      final List<dynamic> jsonData = jsonDecode(schedule);
+      listOfPraySchedule.value =
+          jsonData.map<PrayModel>((e) => PrayModel.fromJson(e)).toList();
+
+      isLoading.value = false;
+    } catch (e) {
+      print("apa sih: $e");
+
+      throw Exception("Get assessment failed!");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  @override
+  void onInit() {
+    getData();
+
+    super.onInit();
+  }
 }
