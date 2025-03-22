@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_common/get_reset.dart';
 import 'package:holy_quran/controller/home_screen_controller.dart';
 import 'package:holy_quran/controller/user_controller.dart';
 import 'package:holy_quran/data/model/list_surah_model.dart';
 import 'package:holy_quran/utils/app_images.dart';
 import 'package:holy_quran/utils/constant.dart';
-import 'package:holy_quran/utils/extensions/last_index_extension.dart';
 import 'package:holy_quran/utils/extensions/spacing_extension.dart';
-import 'package:holy_quran/utils/utils.dart';
+import 'package:holy_quran/utils/widgets/rotating_switcher.dart';
 import 'package:holy_quran/view/menu/home/grid_of_juzz_screen.dart';
 import 'package:holy_quran/view/menu/home/grid_of_surah_screen.dart';
 import 'package:holy_quran/view/menu/home/list_of_juzz_screen.dart';
@@ -44,11 +42,11 @@ class HomeScreen extends StatelessWidget {
                 _lastRead().paddingSymmetric(
                   horizontal: 16.0,
                 ),
-                Lottie.asset(
-                  'assets/lottie/list_to_grid.json',
-                  width: 20,
-                  height: 20,
-                ),
+                // Lottie.asset(
+                //   'assets/lottie/list_to_grid.json',
+                //   width: 20,
+                //   height: 20,
+                // ),
                 mainMargin.verticalSpace,
                 _pageController(),
                 8.0.verticalSpace,
@@ -209,14 +207,14 @@ class HomeScreen extends StatelessWidget {
       Icons.list_rounded,
       Icons.grid_on_rounded,
     ];
-    return Obx(
-      () {
-        return Column(
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+            Obx(
+              () {
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: List.generate(
                     listItem.length,
@@ -227,68 +225,65 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ).paddingSymmetric(
                   vertical: 8,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: List.generate(
-                    viewItem.length,
-                    (index) {
-                      var isActive = homeC.selectedViewPage.value == index;
-                      return _itemView(viewItem[index], isActive, index)
-                          .paddingOnly(
-                        right: mainMargin / 2,
-                      );
-                    },
-                  ),
-                ).paddingSymmetric(
-                  vertical: 8,
-                  horizontal: 16.0,
-                ),
-              ],
+                );
+              },
             ),
-            Stack(
-              children: [
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                  ),
-                  child: SizedBox(
-                    height: 4,
-                    width: Get.width,
-                  ),
-                ),
-                Positioned(
-                  child: Row(
-                    children: List.generate(
-                      2,
-                      (index) {
-                        var isActive = homeC.selectedIndexPage.value == index;
-                        var item = listItem[index];
-                        return DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? const Color(AppColor.primary)
-                                : Colors.transparent,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(
-                                5,
-                              ),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: 4,
-                            width: (16 * item.length).toDouble(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+            InkWell(
+              onTap: () async{
+                await homeC.triggerRotation();
+                homeC.toggleView();
+                homeC.selectedViewPage.value = homeC.isGrid.value ? 1 : 0;
+              },
+              child: Obx(() => RotatingIcon(
+                isRotating: homeC.isRotating.value,
+                isNeedGrid: homeC.isGrid.value)),
+            ).paddingSymmetric(
+              vertical: 8,
+              horizontal: 16.0,
             ),
           ],
-        );
-      },
+        ),
+        Stack(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+              ),
+              child: SizedBox(
+                height: 4,
+                width: Get.width,
+              ),
+            ),
+            Positioned(
+              child: Row(
+                children: List.generate(
+                  2,
+                  (index) {
+                    var isActive = homeC.selectedIndexPage.value == index;
+                    var item = listItem[index];
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? const Color(AppColor.primary)
+                            : Colors.transparent,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(
+                            5,
+                          ),
+                        ),
+                      ),
+                      child: SizedBox(
+                        height: 4,
+                        width: (16 * item.length).toDouble(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

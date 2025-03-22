@@ -8,9 +8,6 @@ import 'package:holy_quran/data/model/surah_model.dart';
 import 'package:holy_quran/data/repository/home_screen_repository.dart';
 import 'package:holy_quran/routes/app_routes.dart';
 import 'package:holy_quran/utils/constant.dart';
-import 'package:holy_quran/utils/constant.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../data/database/isar_service.dart';
 import '../data/model/list_juzz_model.dart';
@@ -39,6 +36,9 @@ class HomeScreenController extends GetxController {
 
   late PageController quranPageCtrl;
   late PageController lastReadPageCtrl;
+
+  var isGrid = false.obs;
+  var isRotating = false.obs;
 
   void fetchSurahs() async {
     final allSurahs = await isarService.getBySavingType(saveAsLastRead);
@@ -161,6 +161,16 @@ class HomeScreenController extends GetxController {
       },
       fromJson: (e) => JuzzModel.fromJson(e),
     );
+  }
+
+  void toggleView() async {
+    isGrid.value = !isGrid.value;
+  }
+
+  Future<void> triggerRotation() async {
+    isRotating.value = true;
+    await Future.delayed(const Duration(milliseconds: 300)); // Wait for animation
+    isRotating.value = false;
   }
 
   @override
