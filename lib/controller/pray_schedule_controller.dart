@@ -16,6 +16,39 @@ class PrayScheduleController extends GetxController {
 
   var regency = "".obs; // Observable variable to store regency (kabupaten/kota)
 
+  var theDate = DateTime.now().obs;
+
+  Future<void> changeMonth(bool isPrev) async {
+    var monthChanger = 0;
+    if (isPrev) {
+      monthChanger = -1;
+    } else {
+      monthChanger = 1;
+    }
+    theDate.value = DateTime(
+      theDate.value.year,
+      theDate.value.month + monthChanger,
+      theDate.value.day,
+    );
+  }
+
+  List<DateTime> getDaysInMonth(int year, int month) {
+    List<DateTime> days = [];
+    int daysInMonth = DateTime(year, month + 1, 0).day;
+    for (int day = 1; day <= daysInMonth; day++) {
+      days.add(DateTime(year, month, day));
+    }
+    return days;
+  }
+
+  bool checkIsToday(DateTime date, DateTime now){
+    return date.year == now.year && date.month == now.month && date.day == now.day;
+  }
+
+  int getStartingWeekday(int year, int month) {
+    return DateTime(year, month, 1).weekday;
+  }
+
   Future<void> getRegency() async {
     try {
       // Request permission
